@@ -12,11 +12,13 @@ def confirm_markup():
     markup.add(confirm_message)
     markup.add(back_message)
 
+
     return markup
 
 def back_markup():
     markup = ReplyKeyboardMarkup(resize_keyboard=True, selective=True)
     markup.add(back_message)
+
 
     return markup
 
@@ -50,5 +52,13 @@ def user_menu_markup():
     markup.add('🛍️ Каталог')
     markup.add('❓ Помощь', '🛒 Корзина')
     markup.add('🚚 Статус заказа')
+
+    return markup
+
+def admin_menu_markup():
+    markup = ReplyKeyboardMarkup(selective=True)
+    markup.add('⚙️ Настройка каталога')
+    markup.add('🚚 Заказы')
+    markup.add('❓ Вопросы')
 
     return markup
