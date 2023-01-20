@@ -20,6 +20,10 @@ admin_message = 'Админ'
 @dp.message_handler(commands='start')
 @dp.message_handler(text=user_message)
 async def user_mode(message: types.Message):
+    cid = message.chat.id
+    if cid in config.ADMINS:
+        # await message.answer('Не знаю, как Вы угадали кодовое слово, но у вас нет прав просматривать этот раздел) ', reply_markup=user_menu_markup())
+        config.ADMINS.remove(cid)
     await message.answer('''Привет! 👋
 
 🤖 Я бот-магазин по продаже товаров магазина MrHeroGeek.
@@ -33,21 +37,13 @@ async def user_mode(message: types.Message):
 @dp.message_handler(text=admin_message)
 async def admin_mode(message: types.Message):
 
-    settings = '⚙️ Настройка каталога'
-    orders = '🚚 Заказы'
-    questions = '❓ Вопросы'
-
-    markup = ReplyKeyboardMarkup(selective=True)
-    markup.add(settings)
-    markup.add(questions, orders)
-
     cid = message.chat.id
     print(cid)
     if cid not in config.ADMINS:
         await message.answer('Не знаю, как Вы угадали кодовое слово, но у вас нет прав просматривать этот раздел) ', reply_markup=user_menu_markup())
         # config.ADMINS.append(cid)
     else: 
-        await message.answer('Включен админский режим.', reply_markup=markup)
+        await message.answer('Включен админский режим.', reply_markup=admin_menu_markup())
 
 
 async def on_startup(dp):

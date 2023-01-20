@@ -16,6 +16,7 @@ product_cb = CallbackData('product', 'id', 'action')
 
 add_product = '➕ Добавить товар'
 delete_category = '🗑️ Удалить категорию'
+back_message = '👈 Назад'
 
 
 @dp.message_handler(IsAdmin(), text=settings)
@@ -281,5 +282,9 @@ async def show_products(m, products, category_idx):
     markup = ReplyKeyboardMarkup()
     markup.add(add_product)
     markup.add(delete_category)
+    markup.add(back_message)
 
     await m.answer('Хотите что-нибудь добавить или удалить?', reply_markup=markup)
+
+# @dp.message_handler(IsAdmin(), text=back_message)
+

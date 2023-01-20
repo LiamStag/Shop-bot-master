@@ -1,7 +1,7 @@
 
 from aiogram.dispatcher import FSMContext
 from aiogram.types import ReplyKeyboardMarkup, ReplyKeyboardRemove
-from keyboards.default.markups import all_right_message, cancel_message, submit_markup
+from keyboards.default.markups import all_right_message, cancel_message, submit_markup, user_menu_markup
 from aiogram.types import Message
 from states import SosState
 from filters import IsUser
@@ -30,7 +30,7 @@ async def process_price_invalid(message: Message):
 
 @dp.message_handler(text=cancel_message, state=SosState.submit)
 async def process_cancel(message: Message, state: FSMContext):
-    await message.answer('Отменено!', reply_markup=ReplyKeyboardRemove())
+    await message.answer('Отменено!', reply_markup=user_menu_markup())
     await state.finish()
 
 
@@ -45,10 +45,10 @@ async def process_submit(message: Message, state: FSMContext):
             db.query('INSERT INTO questions VALUES (?, ?)',
                      (cid, data['question']))
 
-        await message.answer('Отправлено!', reply_markup=ReplyKeyboardRemove())
+        await message.answer('Отправлено!', reply_markup=user_menu_markup())
 
     else:
 
-        await message.answer('Превышен лимит на количество задаваемых вопросов.', reply_markup=ReplyKeyboardRemove())
+        await message.answer('Превышен лимит на количество задаваемых вопросов.', reply_markup=user_menu_markup())
 
     await state.finish()
