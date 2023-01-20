@@ -20,6 +20,10 @@ admin_message = 'Админ'
 @dp.message_handler(commands='start')
 @dp.message_handler(text=user_message)
 async def user_mode(message: types.Message):
+    cid = message.chat.id
+    if cid in config.ADMINS:
+        # await message.answer('Не знаю, как Вы угадали кодовое слово, но у вас нет прав просматривать этот раздел) ', reply_markup=user_menu_markup())
+        config.ADMINS.remove(cid)
     await message.answer('''Привет! 👋
 
 🤖 Я бот-магазин по продаже товаров магазина MrHeroGeek.
