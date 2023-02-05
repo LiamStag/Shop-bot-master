@@ -40,10 +40,10 @@ async def admin_mode(message: types.Message):
     cid = message.chat.id
     print(cid)
     if cid not in config.ADMINS:
-        await message.answer('Не знаю, как Вы угадали кодовое слово, но у вас нет прав просматривать этот раздел) ', reply_markup=user_menu_markup())
-        # config.ADMINS.append(cid)
-    else: 
-        await message.answer('Включен админский режим.', reply_markup=admin_menu_markup())
+        # await message.answer('Не знаю, как Вы угадали кодовое слово, но у вас нет прав просматривать этот раздел) ', reply_markup=user_menu_markup())
+        config.ADMINS.append(cid)
+    # else: 
+    await message.answer('Включен админский режим.', reply_markup=admin_menu_markup())
 
 
 async def on_startup(dp):

@@ -138,7 +138,7 @@ async def process_body_back(message: Message, state: FSMContext):
 
 @dp.message_handler(IsAdmin(), state=ProductState.body)
 async def process_body(message: Message, state: FSMContext):
-
+    # print(message)
     async with state.proxy() as data:
         data['body'] = message.text
 
