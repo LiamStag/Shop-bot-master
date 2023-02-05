@@ -20,9 +20,8 @@ async def process_catalog(message: Message):
 async def category_callback_handler(query: CallbackQuery, callback_data: dict):
 
     products = db.fetchall('''SELECT * FROM products product
-    WHERE product.tag = (SELECT title FROM categories WHERE idx=?) 
-    AND product.idx NOT IN (SELECT idx FROM cart WHERE cid = ?)''',
-                           (callback_data['id'], query.message.chat.id))
+    WHERE product.tag = (SELECT title FROM categories WHERE idx=?)''',
+                           (callback_data['id'], ))
 
     await query.answer('Все доступные товары.')
     await show_products(query.message, products)
@@ -30,12 +29,14 @@ async def category_callback_handler(query: CallbackQuery, callback_data: dict):
 
 @dp.callback_query_handler(IsUser(), product_cb.filter(action='add'))
 async def add_product_callback_handler(query: CallbackQuery, callback_data: dict):
-
-    db.query('INSERT INTO cart VALUES (?, ?, 1)',
+    product = db.fetchone('SELECT quantity FROM cart WHERE cid = ? AND idx = ?', (query.message.chat.id, callback_data['id']))
+    if product == None:
+        db.query('INSERT INTO cart VALUES (?, ?, 1)',
              (query.message.chat.id, callback_data['id']))
-
+    else:
+        db.query('UPDATE cart SET quantity = ? WHERE cid = ? AND idx = ?',
+             (product[0]+1, query.message.chat.id, callback_data['id']))
     await query.answer('Товар добавлен в корзину!')
-    await query.message.delete()
 
 
 async def show_products(m, products):
@@ -45,14 +46,23 @@ async def show_products(m, products):
         await m.answer('Здесь ничего нет 😢')
 
     else:
-
+        count = len(products)
         await bot.send_chat_action(m.chat.id, ChatActions.TYPING)
 
-        for idx, title, body, image, price, _ in products:
+        markup = product_markup(products[0][0], products[0][4], count, 0)
+        text = f'<b>{products[0][1]}</b>\n\n{products[0][2]}'
 
-            markup = product_markup(idx, price)
-            text = f'<b>{title}</b>\n\n{body}'
+        await m.answer_photo(photo=products[0][3],
+                                 caption=text,
+                                 reply_markup=markup)
 
-            await m.answer_photo(photo=image,
+
+async def show_product(m, products, i):
+    await bot.send_chat_action(m.chat.id, ChatActions.TYPING)
+
+    markup = product_markup(products[i][0], products[i][4], count, 0)
+    text = f'<b>{products[i][1]}</b>\n\n{products[i][2]}'
+
+    await m.answer_photo(photo=products[i][3],
                                  caption=text,
                                  reply_markup=markup)
