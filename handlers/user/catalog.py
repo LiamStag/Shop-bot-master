@@ -28,6 +28,8 @@ async def category_callback_handler(query: CallbackQuery, callback_data: dict):
 
 
 @dp.callback_query_handler(IsUser(), product_cb.filter(action='add'))
+@dp.callback_query_handler(IsUser(), product_cb.filter(action='next'))
+@dp.callback_query_handler(IsUser(), product_cb.filter(action='back'))
 async def add_product_callback_handler(query: CallbackQuery, callback_data: dict):
     product = db.fetchone('SELECT quantity FROM cart WHERE cid = ? AND idx = ?', (query.message.chat.id, callback_data['id']))
     if product == None:
@@ -56,7 +58,7 @@ async def show_products(m, products):
                                  caption=text,
                                  reply_markup=markup)
 
-
+@dp.callback_query_handler(IsUser(), product_cb.filter(action='next'))
 async def show_product(m, products, i):
     await bot.send_chat_action(m.chat.id, ChatActions.TYPING)
 
